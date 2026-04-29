@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --navy:#0a1628;--navy-mid:#1a2f4e;--navy-light:#2d4a72;
+    --gold:#c9a84c;--gold-light:#e8c96a;--gold-pale:#f5e9c8;
+    --white:#ffffff;--off-white:#faf8f4;--gray-soft:#e8e4dc;
+    --text-dark:#1a1a2e;--text-mid:#4a5568;--text-light:#8a9ab0;
+    --font-head:'Playfair Display',serif;--font-body:'Sarabun',sans-serif;
+  }
+  body{font-family:var(--font-body);background:var(--off-white);color:var(--text-dark);overflow-x:hidden}
+  
+  /* NAV */
+  nav{background:var(--navy);padding:0 5%;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,0.3)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:70px}
+  .logo{font-family:var(--font-head);font-size:22px;color:var(--white);letter-spacing:1px}
+  .logo span{color:var(--gold)}
+  .nav-links{display:flex;gap:2rem;list-style:none}
+  .nav-links a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:14px;font-weight:500;letter-spacing:0.5px;transition:color 0.2s;cursor:pointer}
+  .nav-links a:hover{color:var(--gold)}
+  .lang-toggle{display:flex;gap:4px}
+  .lang-btn{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:4px 12px;border-radius:3px;font-size:12px;cursor:pointer;font-family:var(--font-body);transition:all 0.2s}
+  .lang-btn.active{background:var(--gold);color:var(--navy)}
+  .nav-cta{background:var(--gold);color:var(--navy);border:none;padding:8px 20px;border-radius:3px;font-weight:600;font-size:13px;cursor:pointer;font-family:var(--font-body);letter-spacing:0.5px}
+
+  /* PAGES */
+  .page{display:none;min-height:100vh}
+  .page.active{display:block}
+
+  /* ===== HOME ===== */
+  .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 60%,#1e3a5f 100%);min-height:90vh;display:flex;align-items:center;position:relative;overflow:hidden;padding:0 5%}
+  .hero::before{content:'';position:absolute;right:-10%;top:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(201,168,76,0.12) 0%,transparent 70%);pointer-events:none}
+  .hero::after{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(201,168,76,0.3),transparent);pointer-events:none}
+  .hero-content{max-width:620px;z-index:1}
+  .hero-badge{display:inline-block;border:1px solid var(--gold);color:var(--gold);padding:5px 16px;border-radius:2px;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:1.5rem}
+  .hero h1{font-family:var(--font-head);font-size:clamp(36px,5vw,58px);color:var(--white);line-height:1.15;margin-bottom:1.5rem}
+  .hero h1 em{color:var(--gold);font-style:normal}
+  .hero-sub{color:rgba(255,255,255,0.7);font-size:16px;line-height:1.8;margin-bottom:2.5rem;max-width:480px}
+  .hero-actions{display:flex;gap:1rem;flex-wrap:wrap}
+  .btn-gold{background:var(--gold);color:var(--navy);border:none;padding:14px 28px;border-radius:3px;font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font-body);letter-spacing:0.5px;transition:all 0.2s}
+  .btn-gold:hover{background:var(--gold-light);transform:translateY(-1px)}
+  .btn-outline{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.4);padding:14px 28px;border-radius:3px;font-weight:500;font-size:14px;cursor:pointer;font-family:var(--font-body);transition:all 0.2s}
+  .btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.1);border-radius:4px;margin-top:3rem}
+  .stat-box{background:rgba(255,255,255,0.05);padding:1.2rem;text-align:center}
+  .stat-num{font-family:var(--font-head);font-size:28px;color:var(--gold);display:block}
+  .stat-label{font-size:12px;color:rgba(255,255,255,0.6);margin-top:2px}
+
+  /* PROCESS */
+  .section{padding:80px 5%}
+  .section-alt{background:var(--white)}
+  .sec-header{text-align:center;margin-bottom:60px}
+  .sec-tag{display:inline-block;color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:0.8rem}
+  .sec-title{font-family:var(--font-head);font-size:clamp(28px,3.5vw,40px);color:var(--navy);margin-bottom:1rem}
+  .sec-sub{color:var(--text-mid);font-size:15px;max-width:500px;margin:0 auto;line-height:1.7}
+  .process-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0;position:relative}
+  .process-grid::before{content:'';position:absolute;top:38px;left:10%;right:10%;height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);pointer-events:none}
+  .process-step{text-align:center;padding:2rem 1.5rem;position:relative}
+  .step-num{width:76px;height:76px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-family:var(--font-head);font-size:22px;color:var(--gold);background:var(--white);position:relative;z-index:1}
+  .step-name{font-weight:600;font-size:15px;color:var(--navy);margin-bottom:0.5rem}
+  .step-desc{font-size:13px;color:var(--text-mid);line-height:1.6}
+  .step-time{display:inline-block;background:var(--gold-pale);color:var(--navy);padding:2px 10px;border-radius:10px;font-size:11px;margin-top:8px;font-weight:600}
+
+  /* FEATURES */
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+  .feat-card{background:var(--white);border:1px solid var(--gray-soft);border-radius:6px;padding:2rem;border-top:3px solid var(--gold);transition:box-shadow 0.2s}
+  .feat-card:hover{box-shadow:0 8px 30px rgba(10,22,40,0.1)}
+  .feat-icon{width:48px;height:48px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:1.2rem;font-size:20px}
+  .feat-title{font-weight:700;font-size:16px;color:var(--navy);margin-bottom:0.5rem}
+  .feat-desc{font-size:13px;color:var(--text-mid);line-height:1.7}
+
+  /* TESTIMONIALS */
+  .testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+  .testi-card{background:var(--navy);border-radius:6px;padding:2rem;position:relative}
+  .testi-card::before{content:'"';font-family:var(--font-head);font-size:80px;color:var(--gold);opacity:0.3;position:absolute;top:10px;left:20px;line-height:1}
+  .testi-text{color:rgba(255,255,255,0.85);font-size:14px;line-height:1.8;margin-bottom:1.5rem;position:relative;z-index:1}
+  .testi-author{display:flex;align-items:center;gap:10px}
+  .author-avatar{width:40px;height:40px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:var(--navy)}
+  .author-name{color:var(--white);font-weight:600;font-size:14px}
+  .author-detail{color:rgba(255,255,255,0.5);font-size:12px}
+  .stars{color:var(--gold);font-size:12px;margin-bottom:0.8rem}
+
+  /* ===== SERVICES ===== */
+  .services-intro{background:var(--navy);padding:60px 5%;text-align:center}
+  .services-intro h2{font-family:var(--font-head);font-size:clamp(28px,4vw,44px);color:var(--white);margin-bottom:1rem}
+  .services-intro p{color:rgba(255,255,255,0.7);max-width:500px;margin:0 auto;font-size:15px}
+  .service-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;padding:60px 5%}
+  .svc-card{background:var(--white);border:1px solid var(--gray-soft);border-radius:8px;overflow:hidden;transition:all 0.2s}
+  .svc-card:hover{box-shadow:0 12px 40px rgba(10,22,40,0.12);transform:translateY(-2px)}
+  .svc-header{background:var(--navy);padding:1.5rem;display:flex;align-items:center;gap:1rem}
+  .svc-icon-bg{width:50px;height:50px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:22px}
+  .svc-title{font-family:var(--font-head);font-size:18px;color:var(--white)}
+  .svc-body{padding:1.5rem}
+  .svc-desc{font-size:14px;color:var(--text-mid);line-height:1.7;margin-bottom:1rem}
+  .svc-list{list-style:none}
+  .svc-list li{font-size:13px;color:var(--text-dark);padding:4px 0;padding-left:16px;position:relative}
+  .svc-list li::before{content:'';position:absolute;left:0;top:11px;width:6px;height:6px;border-radius:50%;background:var(--gold)}
+  .svc-price{background:var(--gold-pale);border-top:1px solid var(--gray-soft);padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center}
+  .price-label{font-size:12px;color:var(--text-mid)}
+  .price-val{font-family:var(--font-head);font-size:18px;color:var(--navy);font-weight:700}
+
+  /* ===== PORTFOLIO ===== */
+  .portfolio-intro{background:var(--navy);padding:60px 5%;text-align:center}
+  .portfolio-intro h2{font-family:var(--font-head);font-size:clamp(28px,4vw,44px);color:var(--white);margin-bottom:1rem}
+  .portfolio-intro p{color:rgba(255,255,255,0.7);max-width:500px;margin:0 auto}
+  .filter-bar{padding:2rem 5% 0;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .filter-btn{background:transparent;border:1px solid var(--gray-soft);color:var(--text-mid);padding:8px 18px;border-radius:20px;font-size:13px;cursor:pointer;font-family:var(--font-body);transition:all 0.2s}
+  .filter-btn.active,.filter-btn:hover{background:var(--navy);color:var(--gold);border-color:var(--navy)}
+  .portfolio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;padding:2rem 5% 60px}
+  .port-card{background:var(--white);border-radius:8px;overflow:hidden;border:1px solid var(--gray-soft);transition:all 0.25s;cursor:pointer}
+  .port-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(10,22,40,0.15)}
+  .port-card.hidden{display:none}
+  .port-img{height:200px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:48px}
+  .port-overlay{position:absolute;inset:0;background:rgba(10,22,40,0);transition:background 0.3s;display:flex;align-items:center;justify-content:center}
+  .port-card:hover .port-overlay{background:rgba(10,22,40,0.5)}
+  .overlay-btn{opacity:0;background:var(--gold);color:var(--navy);border:none;padding:10px 20px;border-radius:3px;font-weight:700;font-size:13px;cursor:pointer;transition:opacity 0.3s;font-family:var(--font-body)}
+  .port-card:hover .overlay-btn{opacity:1}
+  .port-info{padding:1.2rem}
+  .port-cat{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+  .port-name{font-weight:700;font-size:15px;color:var(--navy);margin-bottom:4px}
+  .port-detail{font-size:13px;color:var(--text-mid)}
+  .port-tags{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+  .port-tag{background:var(--off-white);border:1px solid var(--gray-soft);color:var(--text-mid);font-size:11px;padding:2px 8px;border-radius:10px}
+
+  /* ===== CONTACT ===== */
+  .contact-intro{background:var(--navy);padding:60px 5%;text-align:center}
+  .contact-intro h2{font-family:var(--font-head);font-size:clamp(28px,4vw,44px);color:var(--white);margin-bottom:1rem}
+  .contact-intro p{color:rgba(255,255,255,0.7);max-width:500px;margin:0 auto}
+  .contact-layout{display:grid;grid-template-columns:1fr 1.5fr;gap:0;padding:60px 5%;gap:40px;max-width:1100px;margin:0 auto}
+  .contact-info h3{font-family:var(--font-head);font-size:24px;color:var(--navy);margin-bottom:1rem}
+  .contact-info p{color:var(--text-mid);font-size:14px;line-height:1.7;margin-bottom:1.5rem}
+  .contact-item{display:flex;gap:12px;margin-bottom:1rem;align-items:flex-start}
+  .c-icon{width:40px;height:40px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .c-text strong{display:block;font-size:13px;color:var(--navy);margin-bottom:2px}
+  .c-text span{font-size:13px;color:var(--text-mid)}
+  .cta-buttons{display:flex;flex-direction:column;gap:10px;margin-top:1.5rem}
+  .cta-line{display:flex;align-items:center;gap:10px;background:var(--navy);color:var(--white);padding:12px 20px;border-radius:6px;text-decoration:none;transition:background 0.2s;cursor:pointer}
+  .cta-line:hover{background:var(--navy-light)}
+  .cta-line-gold{background:var(--gold);color:var(--navy)}
+  .cta-line-gold:hover{background:var(--gold-light)}
+  .cta-icon{font-size:18px}
+  .cta-text strong{display:block;font-size:13px;font-weight:700}
+  .cta-text small{font-size:11px;opacity:0.7}
+  
+  /* FORM */
+  .contact-form{background:var(--white);border:1px solid var(--gray-soft);border-radius:8px;padding:2rem}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .form-group{margin-bottom:1.2rem}
+  .form-group label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px}
+  .form-group input,.form-group select,.form-group textarea{width:100%;border:1px solid var(--gray-soft);border-radius:4px;padding:10px 14px;font-size:14px;font-family:var(--font-body);color:var(--text-dark);background:var(--off-white);outline:none;transition:border-color 0.2s}
+  .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--navy);background:var(--white)}
+  .form-group input.error,.form-group select.error,.form-group textarea.error{border-color:#e53e3e}
+  .error-msg{color:#e53e3e;font-size:11px;margin-top:4px;display:none}
+  .error-msg.show{display:block}
+  .form-group textarea{height:100px;resize:vertical}
+  .form-submit{width:100%;background:var(--navy);color:var(--gold);border:none;padding:14px;border-radius:4px;font-weight:700;font-size:15px;cursor:pointer;font-family:var(--font-body);letter-spacing:0.5px;transition:all 0.2s;margin-top:0.5rem}
+  .form-submit:hover{background:var(--navy-light)}
+  .form-success{display:none;background:linear-gradient(135deg,var(--navy),var(--navy-mid));color:var(--white);padding:2rem;border-radius:6px;text-align:center}
+  .form-success .success-icon{font-size:48px;margin-bottom:1rem}
+  .form-success h4{font-family:var(--font-head);font-size:20px;color:var(--gold);margin-bottom:0.5rem}
+
+  /* FOOTER */
+  footer{background:var(--navy);padding:40px 5%;text-align:center;border-top:1px solid rgba(201,168,76,0.3)}
+  .footer-logo{font-family:var(--font-head);font-size:20px;color:var(--white);margin-bottom:0.5rem}
+  .footer-logo span{color:var(--gold)}
+  footer p{color:rgba(255,255,255,0.5);font-size:12px}
+
+  @media(max-width:768px){
+    .contact-layout{grid-template-columns:1fr}
+    .form-row{grid-template-columns:1fr}
+    .nav-links{display:none}
+    .hero::after{display:none}
+  }
+</style>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo">ARTISANA<span>DECO</span></div>
+    <ul class="nav-links">
+      <li><a onclick="showPage('home')" id="nav-home">หน้าหลัก</a></li>
+      <li><a onclick="showPage('services')" id="nav-services">บริการ</a></li>
+      <li><a onclick="showPage('portfolio')" id="nav-portfolio">ผลงาน</a></li>
+      <li><a onclick="showPage('contact')" id="nav-contact">ติดต่อ</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:1rem">
+      <div class="lang-toggle">
+        <button class="lang-btn active" onclick="setLang('th')">TH</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+      </div>
+      <button class="nav-cta" onclick="showPage('contact')"><span id="cta-nav">ขอใบเสนอราคา</span></button>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HOME PAGE ===== -->
+<div id="page-home" class="page active">
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge" id="hero-badge">ครบวงจร · มืออาชีพ · ส่งมอบตรงเวลา</div>
+      <h1 id="hero-h1">เปลี่ยนทุกพื้นที่<br>ให้เป็น<em>บ้านในฝัน</em><br>ของคุณ</h1>
+      <p class="hero-sub" id="hero-sub">บริการออกแบบตกแต่งภายในและรีโนเวทครบวงจร ตั้งแต่ออกแบบจนส่งมอบงาน ด้วยทีมช่างมืออาชีพและวัสดุคุณภาพสูง ราคาโปร่งใส ไม่มีค่าใช้จ่ายแอบแฝง</p>
+      <div class="hero-actions">
+        <button class="btn-gold" onclick="showPage('contact')" id="hero-cta1">ขอใบเสนอราคาฟรี</button>
+        <button class="btn-outline" onclick="showPage('portfolio')" id="hero-cta2">ดูผลงาน</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-box"><span class="stat-num">500+</span><span class="stat-label" id="stat1">โครงการที่สำเร็จ</span></div>
+        <div class="stat-box"><span class="stat-num">10+</span><span class="stat-label" id="stat2">ปีประสบการณ์</span></div>
+        <div class="stat-box"><span class="stat-num">98%</span><span class="stat-label" id="stat3">ลูกค้าพึงพอใจ</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="sec-header">
+      <div class="sec-tag" id="proc-tag">ขั้นตอนการทำงาน</div>
+      <h2 class="sec-title" id="proc-title">ครบวงจร ชัดเจน โปร่งใส</h2>
+      <p class="sec-sub" id="proc-sub">เราวางแผนทุกขั้นตอนให้คุณเห็นภาพชัดเจน ไม่มีค่าใช้จ่ายซ่อนเร้น พร้อมอัปเดตความคืบหน้าทุกสัปดาห์</p>
+    </div>
+    <div class="process-grid">
+      <div class="process-step">
+        <div class="step-num">01</div>
+        <div class="step-name" id="s1name">ปรึกษาฟรี</div>
+        <div class="step-desc" id="s1desc">ประเมินพื้นที่ รับฟังความต้องการ แนะนำแนวทางที่เหมาะสม</div>
+        <span class="step-time">1-2 วัน</span>
+      </div>
+      <div class="process-step">
+        <div class="step-num">02</div>
+        <div class="step-name" id="s2name">ออกแบบ & เสนอราคา</div>
+        <div class="step-desc" id="s2desc">จัดทำ 3D Rendering พร้อมใบเสนอราคาแบบละเอียด</div>
+        <span class="step-time">3-7 วัน</span>
+      </div>
+      <div class="process-step">
+        <div class="step-num">03</div>
+        <div class="step-name" id="s3name">ลงมือดำเนินงาน</div>
+        <div class="step-desc" id="s3desc">ทีมช่างมืออาชีพเริ่มงาน อัปเดตความคืบหน้าทุกสัปดาห์</div>
+        <span class="step-time">ตามที่กำหนด</span>
+      </div>
+      <div class="process-step">
+        <div class="step-num">04</div>
+        <div class="step-name" id="s4name">ส่งมอบ & รับประกัน</div>
+        <div class="step-desc" id="s4desc">ตรวจงานร่วมกัน แก้ไขจนพอใจ พร้อมรับประกันงาน 1 ปี</div>
+        <span class="step-time">รับประกัน 1 ปี</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="sec-header">
+      <div class="sec-tag">ทำไมต้องเลือกเรา</div>
+      <h2 class="sec-title" id="feat-title">ครบ · เร็ว · มั่นใจได้</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card"><div class="feat-icon">🏆</div><div class="feat-title" id="f1t">ช่างมืออาชีพ</div><div class="feat-desc" id="f1d">ทีมช่างผ่านการอบรมและมีประสบการณ์ตรงสาย ทำงานสะอาด ตรงเวลา</div></div>
+      <div class="feat-card"><div class="feat-icon">💎</div><div class="feat-title" id="f2t">วัสดุคุณภาพสูง</div><div class="feat-desc" id="f2d">คัดสรรวัสดุเกรดพรีเมียมในราคาที่เข้าถึงได้ ทนทาน สวยงาม</div></div>
+      <div class="feat-card"><div class="feat-icon">📋</div><div class="feat-title" id="f3t">ราคาโปร่งใส</div><div class="feat-desc" id="f3d">ใบเสนอราคาละเอียดทุกรายการ ไม่มีค่าใช้จ่ายแอบแฝง เซ็นสัญญาชัดเจน</div></div>
+      <div class="feat-card"><div class="feat-icon">⏱️</div><div class="feat-title" id="f4t">ส่งงานตรงเวลา</div><div class="feat-desc" id="f4d">วางแผน Timeline ชัดเจน พร้อมเบี้ยปรับหากงานล่าช้าเกินกำหนด</div></div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--navy)">
+    <div class="sec-header">
+      <div class="sec-tag">รีวิวจากลูกค้า</div>
+      <h2 class="sec-title" style="color:var(--white)" id="testi-title">เสียงจากลูกค้าจริง</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testi-card"><div class="stars">★★★★★</div><p class="testi-text">"ประทับใจมากครับ ทีมงานมืออาชีพ งานสวย ส่งตรงเวลา ราคาไม่แพง แนะนำเลย"</p><div class="testi-author"><div class="author-avatar">สม</div><div><div class="author-name">คุณสมชาย</div><div class="author-detail">รีโนเวทบ้านเดี่ยว 3 ชั้น</div></div></div></div>
+      <div class="testi-card"><div class="stars">★★★★★</div><p class="testi-text">"ดีใจมากที่เลือกเจ้านี้ค่ะ แบบสวยเกินคาด ช่างสุภาพ พื้นที่แคบๆ แต่จัดได้ลงตัวมาก"</p><div class="testi-author"><div class="author-avatar">นิ</div><div><div class="author-name">คุณนิภา</div><div class="author-detail">ตกแต่งคอนโด 35 ตร.ม.</div></div></div></div>
+      <div class="testi-card"><div class="stars">★★★★★</div><p class="testi-text">"ร้านค้าของเราดูน่าเชื่อถือขึ้นมากหลังรีโนเวท ยอดขายเพิ่มขึ้น 30% เลยทีเดียว"</p><div class="testi-author"><div class="author-avatar">วิ</div><div><div class="author-name">คุณวิภา</div><div class="author-detail">เจ้าของร้านกาแฟ</div></div></div></div>
+    </div>
+  </section>
+  <footer><div class="footer-logo">ARTISANA<span>DECO</span></div><p>© 2024 ArtisanaDeco. All Rights Reserved.</p></footer>
+</div>
+
+<!-- ===== SERVICES PAGE ===== -->
+<div id="page-services" class="page">
+  <div class="services-intro">
+    <div class="sec-tag" style="color:var(--gold)">บริการของเรา</div>
+    <h2 id="svc-page-title">ครบทุกความต้องการ ในที่เดียว</h2>
+    <p id="svc-page-sub">ตั้งแต่ห้องเดียวไปจนถึงทั้งหลัง เราพร้อมดูแลทุกขั้นตอน</p>
+  </div>
+  <div class="service-cards">
+    <div class="svc-card">
+      <div class="svc-header"><div class="svc-icon-bg">🛋️</div><div class="svc-title">Interior Design</div></div>
+      <div class="svc-body">
+        <p class="svc-desc">ออกแบบตกแต่งภายในครบวงจร ทั้งบ้านใหม่และบ้านเก่า พร้อม 3D Rendering ก่อนลงมือทำจริง</p>
+        <ul class="svc-list"><li>สำรวจพื้นที่และรับฟังความต้องการ</li><li>ออกแบบ 3D และเลือกวัสดุ</li><li>ควบคุมงานก่อสร้างครบวงจร</li><li>ตกแต่งและจัดวางเฟอร์นิเจอร์</li></ul>
+      </div>
+      <div class="svc-price"><span class="price-label">เริ่มต้น</span><span class="price-val">฿150,000</span></div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-header"><div class="svc-icon-bg">🔨</div><div class="svc-title">Home Renovation</div></div>
+      <div class="svc-body">
+        <p class="svc-desc">รีโนเวทบ้านเก่าให้เหมือนบ้านใหม่ ทั้งโครงสร้าง งานระบบ และตกแต่ง ทีมช่างเฉพาะทางครบทุกสาย</p>
+        <ul class="svc-list"><li>รีโนเวทห้องน้ำ ห้องครัว</li><li>เปลี่ยนวัสดุพื้น ผนัง เพดาน</li><li>งานระบบไฟ ประปา แอร์</li><li>รับประกันงาน 1 ปี</li></ul>
+      </div>
+      <div class="svc-price"><span class="price-label">เริ่มต้น</span><span class="price-val">฿80,000</span></div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-header"><div class="svc-icon-bg">🏢</div><div class="svc-title">Commercial Space</div></div>
+      <div class="svc-body">
+        <p class="svc-desc">ออกแบบและตกแต่งพื้นที่เชิงพาณิชย์ ร้านค้า ออฟฟิศ โรงแรม ด้วยมาตรฐานระดับมืออาชีพ</p>
+        <ul class="svc-list"><li>ร้านอาหาร คาเฟ่ บิวตี้</li><li>สำนักงาน Co-Working Space</li><li>โชว์รูม ร้านค้าปลีก</li><li>โรงแรม เซอร์วิสอพาร์ตเมนต์</li></ul>
+      </div>
+      <div class="svc-price"><span class="price-label">เริ่มต้น</span><span class="price-val">฿200,000</span></div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-header"><div class="svc-icon-bg">🪑</div><div class="svc-title">Built-in Furniture</div></div>
+      <div class="svc-body">
+        <p class="svc-desc">เฟอร์นิเจอร์บิวท์อินแบบสั่งทำ ตอบโจทย์การใช้งานและพื้นที่ทุกรูปแบบ วัสดุหลากหลายให้เลือก</p>
+        <ul class="svc-list"><li>ตู้เสื้อผ้า วอล์คอินโคลเซต</li><li>ครัวบิวท์อิน ห้องน้ำ</li><li>ชั้นวางหนังสือ ห้องทำงาน</li><li>เฟอร์นิเจอร์ตกแต่งผนัง</li></ul>
+      </div>
+      <div class="svc-price"><span class="price-label">เริ่มต้น</span><span class="price-val">฿30,000</span></div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-header"><div class="svc-icon-bg">🏡</div><div class="svc-title">Condo Makeover</div></div>
+      <div class="svc-body">
+        <p class="svc-desc">ผู้เชี่ยวชาญการตกแต่งคอนโด เข้าใจข้อจำกัดของพื้นที่และกฎระเบียบนิติบุคคล</p>
+        <ul class="svc-list"><li>ออกแบบให้พื้นที่เล็กดูกว้างขึ้น</li><li>เฟอร์นิเจอร์อเนกประสงค์</li><li>ประสานกับนิติบุคคล</li><li>แล้วเสร็จภายใน 30-60 วัน</li></ul>
+      </div>
+      <div class="svc-price"><span class="price-label">เริ่มต้น</span><span class="price-val">฿50,000</span></div>
+    </div>
+    <div class="svc-card">
+      <div class="svc-header"><div class="svc-icon-bg">🎨</div><div class="svc-title">Design Consultation</div></div>
+      <div class="svc-body">
+        <p class="svc-desc">บริการให้คำปรึกษาด้านการออกแบบ สำหรับผู้ที่ต้องการแนวทางก่อนตัดสินใจลงทุน</p>
+        <ul class="svc-list"><li>วิเคราะห์พื้นที่และให้คำแนะนำ</li><li>แนะนำโทนสี สไตล์ วัสดุ</li><li>จัดทำ Mood Board</li><li>ประเมินงบประมาณเบื้องต้น</li></ul>
+      </div>
+      <div class="svc-price"><span class="price-label">ค่าบริการ</span><span class="price-val">฿3,000/ครั้ง</span></div>
+    </div>
+  </div>
+  <footer><div class="footer-logo">ARTISANA<span>DECO</span></div><p>© 2024 ArtisanaDeco. All Rights Reserved.</p></footer>
+</div>
+
+<!-- ===== PORTFOLIO PAGE ===== -->
+<div id="page-portfolio" class="page">
+  <div class="portfolio-intro">
+    <div class="sec-tag" style="color:var(--gold)">ผลงานของเรา</div>
+    <h2>ทุกโครงการ คือความภาคภูมิใจ</h2>
+    <p>เลือกดูตามหมวดหมู่ที่สนใจ</p>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterPortfolio('all',this)">ทั้งหมด</button>
+    <button class="filter-btn" onclick="filterPortfolio('before-after',this)">Before & After</button>
+    <button class="filter-btn" onclick="filterPortfolio('styles',this)">Styles</button>
+    <button class="filter-btn" onclick="filterPortfolio('functions',this)">Functions</button>
+    <button class="filter-btn" onclick="filterPortfolio('craft',this)">Craftsmanship</button>
+    <button class="filter-btn" onclick="filterPortfolio('commercial',this)">Commercial</button>
+    <button class="filter-btn" onclick="filterPortfolio('review',this)">Story & Review</button>
+  </div>
+  <div class="portfolio-grid" id="portfolio-grid">
+    <div class="port-card" data-cat="before-after"><div class="port-img" style="background:linear-gradient(135deg,#1a2f4e,#c9a84c)">🏠</div><div class="port-overlay"><button class="overlay-btn">ดูรายละเอียด</button></div><div class="port-info"><div class="port-cat">Before & After</div><div class="port-name">บ้านเดี่ยว ย่านลาดพร้าว</div><div class="port-detail">รีโนเวทใหม่ทั้งหลัง ใช้เวลา 45 วัน</div><div class="port-tags"><span class="port-tag">Modern</span><span class="port-tag">3 ห้องนอน</span></div></div></div>
+    <div class="port-card" data-cat="styles"><div class="port-img" style="background:linear-gradient(135deg,#2d4a72,#8a9ab0)">🛋️</div><div class="port-overlay"><button class="overlay-btn">ดูรายละเอียด</button></div><div class="port-info"><div class="port-cat">Styles</div><div class="port-name">Japandi Living Room</div><div class="port-detail">ห้องนั่งเล่น สไตล์ Japandi ผสมไทย</div><div class="port-tags"><span class="port-tag">Japandi</span><span class="port-tag">Minimal</span></div></div></div>
+    <div class="port-card" data-cat="functions"><div class="port-img" style="background:linear-gradient(135deg,#0a1628,#c9a84c80)">🍳</div><div class="port-overlay"><button class="overlay-btn">ดูรายละเอียด</button></div><div class="port-info"><div class="port-cat">Functions</div><div class="port-name">ครัวเล็กแต่ครบ</div><div class="port-detail">แก้ปัญหาพื้นที่ครัว 8 ตร.ม. ให้ใช้งานได้สูงสุด</div><div class="port-tags"><span class="port-tag">Kitchen</span><span class="port-tag">Storage</span></div></div></div>
+    <div class="port-card" data-cat="craft"><div class="port-img" style="background:linear-gradient(135deg,#4a3020,#c9a84c)">🪵</div><div class="port-overlay"><button class="overlay-btn">ดูรายละเอียด</button></div><div class="port-info"><div class="port-cat">Craftsmanship</div><div class="port-name">งานไม้ประณีต</div><div class="port-detail">ตู้วอล์คอินสั่งทำพิเศษ วัสดุไม้แท้นำเข้า</div><div class="port-tags"><span class="port-tag">Handcraft</span><span class="port-tag">Premium</span></div></div></div>
+    <div class="port-card" data-cat="commercial"><div class="port-img" style="background:linear-gradient(135deg,#1a2f4e,#2d6b4e)">☕</div><div class="port-overlay"><button class="overlay-btn">ดูรายละเอียด</button></div><div class="port-info"><div class="port-cat">Commercial</div><div class="port-name">Cafe "The Roast"</div><div class="port-detail">คาเฟ่สไตล์ Industrial 80 ที่นั่ง กรุงเทพ</div><div class="port-tags"><span class="port-tag">Cafe</span><span class="port-tag">Industrial</span></div></div></div>
+    <div class="port-card" data-cat="review"><div class="port-img" style="background:linear-gradient(135deg,#2d1a4e,#c9a84c)">⭐</div><div class="port-overlay"><button class="overlay-btn">ดูรายละเอียด</button></div><div class="port-info"><div class="port-cat">Story & Review</div><div class="port-name">ฝันที่เป็นจริง</div><div class="port-detail">ครอบครัวคุณสมศรี · คอนโด 52 ตร.ม. · ★★★★★</div><div class="port-tags"><span class="port-tag">Review</span><span class="port-tag">Family</span></div></div></div>
+    <div class="port-card" data-cat="before-after"><div class="port-img" style="background:linear-gradient(135deg,#1e3a5f,#c9a84c90)">🚿</div><div class="port-overlay"><button class="overlay-btn">ดูรายละเอียด</button></div><div class="port-info"><div class="port-cat">Before & After</div><div class="port-name">ห้องน้ำโฉมใหม่</div><div class="port-detail">รีโนเวทห้องน้ำ 3 ตร.ม. ให้เหมือนห้องน้ำโรงแรม</div><div class="port-tags"><span class="port-tag">Bathroom</span><span class="port-tag">Luxury Feel</span></div></div></div>
+    <div class="port-card" data-cat="commercial"><div class="port-img" style="background:linear-gradient(135deg,#0a1628,#3d6b8e)">🏢</div><div class="port-overlay"><button class="overlay-btn">ดูรายละเอียด</button></div><div class="port-info"><div class="port-cat">Commercial</div><div class="port-name">Office Renovation</div><div class="port-detail">สำนักงาน 200 ตร.ม. สไตล์ Modern Professional</div><div class="port-tags"><span class="port-tag">Office</span><span class="port-tag">Workspace</span></div></div></div>
+    <div class="port-card" data-cat="styles"><div class="port-img" style="background:linear-gradient(135deg,#2e1f3e,#a0845c)">🎀</div><div class="port-overlay"><button class="overlay-btn">ดูรายละเอียด</button></div><div class="port-info"><div class="port-cat">Styles</div><div class="port-name">French Vintage Bedroom</div><div class="port-detail">ห้องนอนสไตล์ฝรั่งเศส สวยหวาน ดูแพง</div><div class="port-tags"><span class="port-tag">Vintage</span><span class="port-tag">French</span></div></div></div>
+  </div>
+  <footer><div class="footer-logo">ARTISANA<span>DECO</span></div><p>© 2024 ArtisanaDeco. All Rights Reserved.</p></footer>
+</div>
+
+<!-- ===== CONTACT PAGE ===== -->
+<div id="page-contact" class="page">
+  <div class="contact-intro">
+    <div class="sec-tag" style="color:var(--gold)">ติดต่อเรา</div>
+    <h2>เริ่มต้นสร้างพื้นที่ในฝัน</h2>
+    <p>ปรึกษาฟรี ไม่มีข้อผูกมัด ทีมงานตอบภายใน 1 ชั่วโมง</p>
+  </div>
+  <div class="contact-layout">
+    <div class="contact-info">
+      <h3>พูดคุยกับเราได้เลย</h3>
+      <p>ทีมผู้เชี่ยวชาญพร้อมให้คำปรึกษาและแนะนำแนวทางที่เหมาะสมกับงบประมาณของคุณ</p>
+      <div class="contact-item"><div class="c-icon">📞</div><div class="c-text"><strong>โทรศัพท์</strong><span>02-XXX-XXXX / 08X-XXX-XXXX</span></div></div>
+      <div class="contact-item"><div class="c-icon">📍</div><div class="c-text"><strong>โชว์รูม</strong><span>XXX ถนนลาดพร้าว แขวงจตุจักร กรุงเทพ</span></div></div>
+      <div class="contact-item"><div class="c-icon">⏰</div><div class="c-text"><strong>เปิดทำการ</strong><span>จันทร์-เสาร์ 9:00–18:00 น.</span></div></div>
+      <div class="cta-buttons">
+        <div class="cta-line cta-line-gold" onclick="alert('เปิด LINE')"><span class="cta-icon">💬</span><div class="cta-text"><strong>LINE: @ArtisanaDeco</strong><small>ตอบกลับรวดเร็ว ภายใน 1 ชม.</small></div></div>
+        <div class="cta-line" onclick="showPage('contact')"><span class="cta-icon">📋</span><div class="cta-text"><strong>ขอใบเสนอราคาออนไลน์</strong><small>กรอกฟอร์มด้านขวา ได้รับในวันถัดไป</small></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="contact-form" id="contact-form-wrap">
+        <h3 style="font-family:var(--font-head);font-size:20px;color:var(--navy);margin-bottom:1.2rem">ขอใบเสนอราคา</h3>
+        <div class="form-row">
+          <div class="form-group"><label>ชื่อ-นามสกุล *</label><input type="text" id="f-name" placeholder="กรอกชื่อของคุณ"><div class="error-msg" id="err-name">กรุณากรอกชื่อ</div></div>
+          <div class="form-group"><label>เบอร์โทรศัพท์ *</label><input type="tel" id="f-phone" placeholder="0X-XXXX-XXXX"><div class="error-msg" id="err-phone">กรุณากรอกเบอร์โทรให้ถูกต้อง</div></div>
+        </div>
+        <div class="form-group"><label>อีเมล</label><input type="email" id="f-email" placeholder="email@example.com"><div class="error-msg" id="err-email">รูปแบบอีเมลไม่ถูกต้อง</div></div>
+        <div class="form-group"><label>บริการที่สนใจ *</label>
+          <select id="f-service">
+            <option value="">-- เลือกบริการ --</option>
+            <option>Interior Design</option><option>Home Renovation</option><option>Commercial Space</option><option>Built-in Furniture</option><option>Condo Makeover</option><option>Design Consultation</option>
+          </select><div class="error-msg" id="err-service">กรุณาเลือกบริการ</div>
+        </div>
+        <div class="form-group"><label>รายละเอียดโครงการ</label><textarea id="f-detail" placeholder="เช่น ขนาดพื้นที่, สไตล์ที่ชอบ, งบประมาณ, ระยะเวลาที่ต้องการ..."></textarea></div>
+        <button class="form-submit" onclick="submitForm()">ส่งใบขอเสนอราคา →</button>
+      </div>
+      <div class="form-success" id="form-success">
+        <div class="success-icon">✅</div>
+        <h4>ส่งข้อมูลเรียบร้อยแล้ว!</h4>
+        <p style="color:rgba(255,255,255,0.8);font-size:14px;margin-top:0.5rem">ทีมงานจะติดต่อกลับภายใน 1 ชั่วโมง (ในเวลาทำการ)</p>
+        <button class="btn-gold" style="margin-top:1.5rem" onclick="resetForm()">ส่งข้อมูลใหม่</button>
+      </div>
+    </div>
+  </div>
+  <footer><div class="footer-logo">ARTISANA<span>DECO</span></div><p>© 2024 ArtisanaDeco. All Rights Reserved.</p></footer>
+</div>
+
+<script>
+const pages=['home','services','portfolio','contact'];
+function showPage(p){
+  pages.forEach(id=>{
+    document.getElementById('page-'+id).classList.remove('active');
+    const nav=document.getElementById('nav-'+id);
+    if(nav)nav.style.color='rgba(255,255,255,0.8)';
+  });
+  document.getElementById('page-'+p).classList.add('active');
+  const activeNav=document.getElementById('nav-'+p);
+  if(activeNav)activeNav.style.color='#c9a84c';
+  window.scrollTo(0,0);
+}
+
+const txt={
+  th:{
+    heroBadge:'ครบวงจร · มืออาชีพ · ส่งมอบตรงเวลา',
+    heroH1:'เปลี่ยนทุกพื้นที่<br>ให้เป็น<em>บ้านในฝัน</em><br>ของคุณ',
+    heroSub:'บริการออกแบบตกแต่งภายในและรีโนเวทครบวงจร ตั้งแต่ออกแบบจนส่งมอบงาน ด้วยทีมช่างมืออาชีพและวัสดุคุณภาพสูง',
+    cta1:'ขอใบเสนอราคาฟรี',cta2:'ดูผลงาน',
+    stat1:'โครงการที่สำเร็จ',stat2:'ปีประสบการณ์',stat3:'ลูกค้าพึงพอใจ',
+    ctaNav:'ขอใบเสนอราคา',procTag:'ขั้นตอนการทำงาน',procTitle:'ครบวงจร ชัดเจน โปร่งใส',
+  },
+  en:{
+    heroBadge:'Full Service · Professional · On-Time Delivery',
+    heroH1:'Transform Every Space<br>Into Your<em> Dream Home</em>',
+    heroSub:'Full-service interior design and renovation, from concept to completion. Professional craftsmen, premium materials, and total transparency.',
+    cta1:'Get Free Quote',cta2:'View Portfolio',
+    stat1:'Projects Completed',stat2:'Years Experience',stat3:'Client Satisfaction',
+    ctaNav:'Request Quote',procTag:'Our Process',procTitle:'Clear. Comprehensive. Trusted.',
+  }
+};
+let lang='th';
+function setLang(l){
+  lang=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.toggle('active',b.textContent===l.toUpperCase())});
+  const t=txt[l];
+  document.getElementById('hero-badge').textContent=t.heroBadge;
+  document.getElementById('hero-h1').innerHTML=t.heroH1;
+  document.getElementById('hero-sub').textContent=t.heroSub;
+  document.getElementById('hero-cta1').textContent=t.cta1;
+  document.getElementById('hero-cta2').textContent=t.cta2;
+  document.getElementById('stat1').textContent=t.stat1;
+  document.getElementById('stat2').textContent=t.stat2;
+  document.getElementById('stat3').textContent=t.stat3;
+  document.getElementById('cta-nav').textContent=t.ctaNav;
+  document.getElementById('proc-tag').textContent=t.procTag;
+  document.getElementById('proc-title').textContent=t.procTitle;
+}
+
+function filterPortfolio(cat,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.port-card').forEach(c=>{
+    c.classList.toggle('hidden',cat!=='all'&&c.dataset.cat!==cat);
+  });
+}
+
+function submitForm(){
+  let ok=true;
+  const n=document.getElementById('f-name');
+  const p=document.getElementById('f-phone');
+  const e=document.getElementById('f-email');
+  const s=document.getElementById('f-service');
+  [n,p,e,s].forEach(el=>{el.classList.remove('error')});
+  document.querySelectorAll('.error-msg').forEach(em=>em.classList.remove('show'));
+  if(!n.value.trim()){n.classList.add('error');document.getElementById('err-name').classList.add('show');ok=false;}
+  if(!p.value.match(/^0\d{8,9}$/)){p.classList.add('error');document.getElementById('err-phone').classList.add('show');ok=false;}
+  if(e.value&&!e.value.match(/^[^@]+@[^@]+\.[^@]+$/)){e.classList.add('error');document.getElementById('err-email').classList.add('show');ok=false;}
+  if(!s.value){s.classList.add('error');document.getElementById('err-service').classList.add('show');ok=false;}
+  if(ok){
+    document.getElementById('contact-form-wrap').style.display='none';
+    document.getElementById('form-success').style.display='block';
+  }
+}
+function resetForm(){
+  document.getElementById('f-name').value='';
+  document.getElementById('f-phone').value='';
+  document.getElementById('f-email').value='';
+  document.getElementById('f-service').value='';
+  document.getElementById('f-detail').value='';
+  document.getElementById('contact-form-wrap').style.display='block';
+  document.getElementById('form-success').style.display='none';
+}
+</script>
